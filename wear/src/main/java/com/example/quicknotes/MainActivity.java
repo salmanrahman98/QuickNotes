@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     public void getPhoneNodeId(OnSuccessListener<String> callback) {
         Wearable.getNodeClient(MainActivity.this).getConnectedNodes().addOnSuccessListener(nodes -> {
             if (!nodes.isEmpty()) {
