@@ -57,9 +57,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.wear)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     wearApp(project(":wear"))
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.android.material:material:1.11.0")
+
 }
