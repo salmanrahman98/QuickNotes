@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.quicknotes.R;
 import com.example.quicknotes.common.Config;
 import com.example.quicknotes.common.PreferenceClass;
 import com.example.quicknotes.databinding.ActivityAddNotesBinding;
@@ -62,7 +63,7 @@ public class AddNotesActivity extends AppCompatActivity {
                     noteList.add(note);
                     preferenceClass.setList(NOTES_LIST, noteList);
 
-                    Toast.makeText(AddNotesActivity.this, "Note Saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNotesActivity.this, getString(R.string.noteSaved), Toast.LENGTH_SHORT).show();
 
                     binding.nameEt.setText("");
                     binding.descriptionEt.setText("");
@@ -74,14 +75,15 @@ public class AddNotesActivity extends AppCompatActivity {
 
     }
 
+    //validaet input data
     private boolean validator() {
         boolean isValid = true;
         if (binding.nameEt.getText().toString().isEmpty()) {
-            binding.nameEt.setError("Required");
+            binding.nameEt.setError(getString(R.string.requiredField));
             isValid = false;
         }
         if (binding.descriptionEt.getText().toString().isEmpty()) {
-            binding.descriptionEt.setError("Required");
+            binding.descriptionEt.setError(getString(R.string.requiredField));
             isValid = false;
         }
         return isValid;
@@ -91,12 +93,12 @@ public class AddNotesActivity extends AppCompatActivity {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak something...");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speakSomething));
 
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
-            Toast.makeText(this, "Voice Input is not supported on this device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.unsupportedVoiceInput), Toast.LENGTH_SHORT).show();
         }
     }
 

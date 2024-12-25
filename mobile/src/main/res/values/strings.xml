@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">QuickNotes</string>
     <string name="quick_notes">Quick Notes</string>
+    <string name="note_saved">Note added!</string>
+    <string name="required_field">Required.</string>
+
+    <string name="speakSomething">Now listening…</string>
+    <string name="unsupportedVoiceInput">Voice input is not supported on this device</string>
+    <string name="newNoteReceived">A new note was received!</string>
+    <string name="noteDeletedSuccessfully">Note was deleted!</string>
 </resources>

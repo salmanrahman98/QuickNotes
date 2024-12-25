@@ -1,9 +1,11 @@
 package com.example.quicknotes.adapter;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.wear.widget.WearableRecyclerView;
@@ -28,6 +30,7 @@ public class NoteAdapter extends WearableRecyclerView.Adapter<NoteAdapter.NoteVi
 
     public void updateList(List<Note> noteList) {
         this.noteList = noteList;
+
         notifyDataSetChanged();
     }
 
@@ -44,6 +47,17 @@ public class NoteAdapter extends WearableRecyclerView.Adapter<NoteAdapter.NoteVi
         holder.binding.noteId.setText("ID: " + noteList.get(position).getNoteId());
         holder.binding.nameTv.setText("Name: " + noteList.get(position).getName());
         holder.binding.descriptionTv.setText("Description: " + noteList.get(position).getDescription());
+
+        var targetX = holder.itemView.getX();
+        var startingX = 0f - holder.itemView.getWidth();
+        long animationStartDelay = position * 100L;
+        holder.itemView.setX(startingX);
+
+        ObjectAnimator rightSlide = ObjectAnimator.ofFloat(holder.itemView, "x", startingX, targetX);
+        rightSlide.setStartDelay(animationStartDelay);
+        rightSlide.setDuration(250L);
+        rightSlide.setInterpolator(new OvershootInterpolator());
+        rightSlide.start();
 
         //formatting date and time
         String formattedDateTime = Config.formatTimestamp(noteList.get(position).getDateTime());

@@ -7,4 +7,10 @@
     <string name="hello_world">From the Square world,\nHello, %1$s!</string>
     <string name="enter_name">Enter Name</string>
     <string name="saveTxt">Save</string>
+    <string name="deletedToast">Deleted</string>
+    <string name="noteSaved">Noted saved</string>
+    <string name="requiredField">Required.</string>
+    <string name="speakSomething">Now listening…</string>
+    <string name="unsupportedVoiceInput">Voice input is not supported on this device</string>
+    <string name="newNoteReceived">A new note was received!</string>
 </resources>

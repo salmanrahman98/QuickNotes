@@ -2,15 +2,18 @@ package com.example.quicknotes.activity;
 
 import static com.example.quicknotes.common.Config.NOTES_LIST;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.quicknotes.R;
 import com.example.quicknotes.adapter.NoteAdapter;
 import com.example.quicknotes.common.Config;
 import com.example.quicknotes.common.PreferenceClass;
@@ -27,18 +30,27 @@ public class MainActivity extends AppCompatActivity {
     List<Note> noteList;
     PreferenceClass preferenceClass;
 
+    // this method sets up the main screen and initializes necessary components
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null) {
+            actionBar.hide();
+        }
+
         preferenceClass = new PreferenceClass(this);
-        //getting task list from preference class for previous tasks.
         noteList = preferenceClass.getList(NOTES_LIST);
         if (noteList == null) {
             noteList = new ArrayList<>();
         }
+
         binding.addAnnouncementFloat.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddNotesActivity.class);
             startActivity(intent);
@@ -47,54 +59,57 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewSetup();
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            Toast.makeText(MainActivity.this, "Refreshing...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "refreshing...", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(() -> {
-
                 noteList = preferenceClass.getList(NOTES_LIST);
                 adapter.updateList(noteList);
-
+                handleEmptyNoteState();
                 binding.swipeRefreshLayout.setRefreshing(false);
-            }, 200); // Delay for demonstration
+            }, 200);
         });
-
-
     }
 
+    // this method configures the recyclerview and handles swipe actions
     private void recyclerViewSetup() {
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // No drag-and-drop functionality needed
+                // no drag and drop needed
                 return false;
             }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                // Get the position of the swiped item
                 int position = viewHolder.getAdapterPosition();
                 Note removedItem = noteList.get(position);
-
-                // Remove the item from the data source
                 noteList.remove(position);
                 adapter.notifyItemRemoved(position);
-
-                // Save the updated list to SharedPreferences
                 preferenceClass.setList(NOTES_LIST, noteList);
                 Config.sendMessage(preferenceClass.getStringOfJson(NOTES_LIST), MainActivity.this);
-
-                // Display a toast message
-                Toast.makeText(MainActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.noteDeletedSuccessfully), Toast.LENGTH_SHORT).show();
+                handleEmptyNoteState();
             }
         });
 
-        // Attach the ItemTouchHelper to the RecyclerView
         itemTouchHelper.attachToRecyclerView(binding.noteRecyclerView);
 
         adapter = new NoteAdapter(this);
         adapter.updateList(noteList);
+        handleEmptyNoteState();
+
         binding.noteRecyclerView.setAdapter(adapter);
     }
 
-
+    // this method shows an empty state message if no notes are available
+    public void handleEmptyNoteState() {
+        if(noteList.size() == 0) {
+            binding.rlEmptyNotes.setVisibility(View.VISIBLE);
+            binding.noteRecyclerView.setVisibility(View.GONE);
+        } else {
+            binding.rlEmptyNotes.setVisibility(View.GONE);
+            binding.noteRecyclerView.setVisibility(View.VISIBLE);
+        }
+    }
 }

@@ -17,10 +17,12 @@ public class PreferenceClass {
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
 
+    // this method sets up the shared preferences
     public PreferenceClass(Context context) {
         sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
+    // this method saves an integer value in shared preferences
     public void putInt(String key, int val) {
         try {
             doEdit();
@@ -33,15 +35,17 @@ public class PreferenceClass {
         }
     }
 
-    // Add other methods for storing and retrieving other data types
+    // this method retrieves an integer from shared preferences
     public int getInt(String key) {
         return sharedPrefs.getInt(key, 0);
     }
 
+    // this method begins the edit process for shared preferences
     private void doEdit() {
         editor = sharedPrefs.edit();
     }
 
+    // this method applies and commits changes to shared preferences
     private void doCommit() {
         if (editor != null) {
             editor.commit();
@@ -49,6 +53,7 @@ public class PreferenceClass {
         }
     }
 
+    // this method saves a list of objects as json in shared preferences
     public <T> void setList(String key, List<T> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
@@ -58,18 +63,17 @@ public class PreferenceClass {
         editor = null;
     }
 
+    // this method retrieves a list of notes from shared preferences
     public List<Note> getList(String key) {
         Gson gson = new Gson();
         String json = getStringOfJson(key);
-        Type type = new TypeToken<List<Note>>() {
-        }.getType();
+        Type type = new TypeToken<List<Note>>() {}.getType();
         return gson.fromJson(json, type);
     }
 
+    // this method returns the json string associated with a key
     @Nullable
     public String getStringOfJson(String key) {
         return sharedPrefs.getString(key, null);
     }
-
-
 }
